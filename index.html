@@ -36,6 +36,10 @@
             margin-top: 20px;
             display: none; /* Hidden until template is generated */
         }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
@@ -66,29 +70,69 @@
 
     <input type="button" value="Generate Template" onclick="generateTemplate()">
     <input type="button" id="downloadBtn" class="download-btn" value="Download Template as Image" onclick="downloadTemplate()">
+    <input type="button" value="View Data" onclick="viewData()">
 
     <div id="output"></div>
+    <div id="error" class="error"></div> <!-- Error message display -->
 
     <script>
         function generateTemplate() {
-            const hypothesis = document.getElementById("hypothesisInput").value;
-            const criteria = document.getElementById("criteriaInput").value;
-            const rationale = document.getElementById("rationaleInput").value;
-            const outcomes = document.getElementById("outcomesInput").value;
+            const hypothesis = document.getElementById("hypothesisInput").value.trim();
+            const criteria = document.getElementById("criteriaInput").value.trim();
+            const rationale = document.getElementById("rationaleInput").value.trim();
+            const outcomes = document.getElementById("outcomesInput").value.trim();
 
+            // Create an entry object
+            const entry = {
+                hypothesis: hypothesis || 'Not provided',
+                criteria: criteria || 'Not provided',
+                rationale: rationale || 'Not provided',
+                outcomes: outcomes || 'Not provided'
+            };
+
+            // Get existing entries from local storage or initialize an empty array
+            const existingEntries = JSON.parse(localStorage.getItem('entries')) || [];
+
+            // Check for duplicates
+            const isDuplicate = existingEntries.some(existingEntry => 
+                existingEntry.hypothesis === entry.hypothesis &&
+                existingEntry.criteria === entry.criteria &&
+                existingEntry.rationale === entry.rationale &&
+                existingEntry.outcomes === entry.outcomes
+            );
+
+            // If duplicate, show error message
+            if (isDuplicate) {
+                document.getElementById("error").innerText = 'Entry already exists.';
+                return; // Exit the function if there's a duplicate
+            } else {
+                document.getElementById("error").innerText = ''; // Clear error message
+            }
+
+            // Add the new entry to the array
+            existingEntries.push(entry);
+            // Save back to local storage
+            localStorage.setItem('entries', JSON.stringify(existingEntries));
+
+            // Display the output
+            displayOutput(entry);
+        }
+
+        function displayOutput(entry) {
             let output = '<h2>Your Grouping Hypothesis Template</h2>';
-            output += `<strong>Hypothesis Statement:</strong><br>${hypothesis || 'Not provided'}<br><br>`;
-            output += `<strong>Purpose:</strong><br>${criteria || 'Not provided'}<br><br>`;
-            output += `<strong>Exposure Context:</strong><br>${rationale || 'Not provided'}<br><br>`;
-            output += `<strong>Input from Life Cycle:</strong><br>${outcomes || 'Not provided'}`;
+            output += `<strong>Hypothesis Statement:</strong><br>${entry.hypothesis}<br><br>`;
+            output += `<strong>Purpose:</strong><br>${entry.criteria}<br><br>`;
+            output += `<strong>Exposure Context:</strong><br>${entry.rationale}<br><br>`;
+            output += `<strong>Input from Life Cycle:</strong><br>${entry.outcomes}`;
 
             document.getElementById("output").innerHTML = output;
 
             // Show the download button
             document.getElementById("downloadBtn").style.display = "inline-block";
+        }
 
-            // Push data to GitHub
-            pushToGitHub(hypothesis, criteria, rationale, outcomes);
+        function viewData() {
+            window.location.href = 'data.html'; // Redirect to the data page
         }
 
         function downloadTemplate() {
@@ -98,38 +142,6 @@
                 link.href = imgData;
                 link.download = 'grouping_hypothesis_template.png';
                 link.click();
-            });
-        }
-
-        async function pushToGitHub(hypothesis, criteria, rationale, outcomes) {
-            const token = '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'; // Replace with your access token
-            const repo = 'https://github.com/czucher/czucher.github.io'; // Your repository
-            const path = 'data.txt'; // File to update
-            const content = `Hypothesis Statement: ${hypothesis}\nPurpose: ${criteria}\nExposure Context: ${rationale}\nInput from Life Cycle: ${outcomes}\n\n`;
-
-            // Get current file content
-            const fileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `token ${token}`
-                }
-            });
-
-            const fileData = await fileResponse.json();
-            const sha = fileData.sha; // Get file SHA for update
-
-            // Create or update the file
-            await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: 'Add grouping hypothesis data',
-                    content: btoa(content), // Base64 encode the content
-                    sha: sha // Include the SHA for updating
-                })
             });
         }
     </script>
