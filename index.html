@@ -86,6 +86,9 @@
 
             // Show the download button
             document.getElementById("downloadBtn").style.display = "inline-block";
+
+            // Push data to GitHub
+            pushToGitHub(hypothesis, criteria, rationale, outcomes);
         }
 
         function downloadTemplate() {
@@ -95,6 +98,38 @@
                 link.href = imgData;
                 link.download = 'grouping_hypothesis_template.png';
                 link.click();
+            });
+        }
+
+        async function pushToGitHub(hypothesis, criteria, rationale, outcomes) {
+            const token = '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'; // Replace with your access token
+            const repo = 'czucher/czucher.github.io'; // Your repository
+            const path = 'data.txt'; // File to update
+            const content = `Hypothesis Statement: ${hypothesis}\nPurpose: ${criteria}\nExposure Context: ${rationale}\nInput from Life Cycle: ${outcomes}\n\n`;
+
+            // Get current file content
+            const fileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            });
+
+            const fileData = await fileResponse.json();
+            const sha = fileData.sha; // Get file SHA for update
+
+            // Create or update the file
+            await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Add grouping hypothesis data',
+                    content: btoa(content), // Base64 encode the content
+                    sha: sha // Include the SHA for updating
+                })
             });
         }
     </script>
