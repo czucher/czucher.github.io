@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grouped Data</title>
+    <title>Stored Data</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,47 +16,66 @@
         h1 {
             color: #333;
         }
-        #output {
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
+        }
+        th, td {
             border: 1px solid #ccc;
             padding: 10px;
-            border-radius: 4px;
-            background-color: #fff;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
 
-    <h1>Stored Grouping Hypothesis Data</h1>
-    <div id="output"></div>
-    <input type="button" value="Back to Form" onclick="goBack()">
+    <h1>Stored Grouping Hypothesis Entries</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Hypothesis Statement</th>
+                <th>Purpose</th>
+                <th>Exposure Context</th>
+                <th>Input from Life Cycle</th>
+            </tr>
+        </thead>
+        <tbody id="dataBody">
+            <!-- Data rows will be populated here -->
+        </tbody>
+    </table>
+
+    <button onclick="clearData()">Clear All Data</button>
 
     <script>
-        function displayData() {
-            const entries = JSON.parse(localStorage.getItem('entries')) || [];
-            if (entries.length === 0) {
-                document.getElementById("output").innerHTML = "<p>No data available.</p>";
-                return;
-            }
+        function loadData() {
+            const existingEntries = JSON.parse(localStorage.getItem('entries')) || [];
+            const dataBody = document.getElementById("dataBody");
 
-            let output = '<h2>Your Grouping Hypothesis Data</h2>';
-            entries.forEach((entry, index) => {
-                output += `<h3>Entry ${index + 1}</h3>`;
-                output += `<strong>Hypothesis Statement:</strong><br>${entry.hypothesis}<br><br>`;
-                output += `<strong>Purpose:</strong><br>${entry.criteria}<br><br>`;
-                output += `<strong>Exposure Context:</strong><br>${entry.rationale}<br><br>`;
-                output += `<strong>Input from Life Cycle:</strong><br>${entry.outcomes}<br><br>`;
+            existingEntries.forEach(entry => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${entry.hypothesis}</td>
+                    <td>${entry.criteria}</td>
+                    <td>${entry.rationale}</td>
+                    <td>${entry.outcomes}</td>
+                `;
+                dataBody.appendChild(row);
             });
-
-            document.getElementById("output").innerHTML = output;
         }
 
-        function goBack() {
-            window.location.href = 'index.html'; // Redirect back to the main page
+        function clearData() {
+            if (confirm("Are you sure you want to clear all stored entries?")) {
+                localStorage.removeItem('entries');
+                document.getElementById("dataBody").innerHTML = ''; // Clear the table
+            }
         }
 
-        // Call displayData on load
-        window.onload = displayData;
+        // Load data when the page loads
+        window.onload = loadData;
     </script>
 
 </body>
