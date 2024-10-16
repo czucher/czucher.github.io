@@ -29,6 +29,15 @@
         th {
             background-color: #f2f2f2;
         }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +58,8 @@
     </table>
 
     <button onclick="clearData()">Clear All Data</button>
+    <button onclick="goBackToForm()">Back to Form</button>
+    <div id="errorMessage" class="error"></div>
 
     <script>
         function loadData() {
@@ -68,10 +79,20 @@
         }
 
         function clearData() {
-            if (confirm("Are you sure you want to clear all stored entries?")) {
+            const password = prompt("Enter password to clear all data:");
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = ''; // Clear previous error message
+
+            if (password === 'testing') {
                 localStorage.removeItem('entries');
                 document.getElementById("dataBody").innerHTML = ''; // Clear the table
+            } else {
+                errorMessage.textContent = 'Incorrect password. Please try again.';
             }
+        }
+
+        function goBackToForm() {
+            window.location.href = 'index.html'; // Replace with the correct path to your form page
         }
 
         // Load data when the page loads
