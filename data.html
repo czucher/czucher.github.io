@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grouped Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        #output {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Stored Grouping Hypothesis Data</h1>
+    <div id="output"></div>
+    <input type="button" value="Back to Form" onclick="goBack()">
+
+    <script>
+        function displayData() {
+            const entries = JSON.parse(localStorage.getItem('entries')) || [];
+            if (entries.length === 0) {
+                document.getElementById("output").innerHTML = "<p>No data available.</p>";
+                return;
+            }
+
+            let output = '<h2>Your Grouping Hypothesis Data</h2>';
+            entries.forEach((entry, index) => {
+                output += `<h3>Entry ${index + 1}</h3>`;
+                output += `<strong>Hypothesis Statement:</strong><br>${entry.hypothesis}<br><br>`;
+                output += `<strong>Purpose:</strong><br>${entry.criteria}<br><br>`;
+                output += `<strong>Exposure Context:</strong><br>${entry.rationale}<br><br>`;
+                output += `<strong>Input from Life Cycle:</strong><br>${entry.outcomes}<br><br>`;
+            });
+
+            document.getElementById("output").innerHTML = output;
+        }
+
+        function goBack() {
+            window.location.href = 'index.html'; // Redirect back to the main page
+        }
+
+        // Call displayData on load
+        window.onload = displayData;
+    </script>
+
+</body>
+</html>
