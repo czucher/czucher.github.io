@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grouping Hypothesis Template Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"], textarea, input[type="button"] {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #output {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .download-btn {
+            margin-top: 20px;
+            display: none; /* Hidden until template is generated */
+        }
+    </style>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <h1>Grouping Hypothesis Template Guide</h1>
+    <p>Follow the steps below to create your grouping hypothesis template.</p>
+
+    <div class="section">
+        <h2>1. Hypothesis Statement</h2>
+        <textarea id="hypothesisInput" placeholder="Enter your hypothesis statement here..."></textarea>
+    </div>
+
+    <div class="section">
+        <h2>2. Purpose</h2>
+        <textarea id="criteriaInput" placeholder="Mechanistic, Precautionary, Regulatory, Safety by Design, Targeted testing..."></textarea>
+    </div>
+
+    <div class="section">
+        <h2>3. Exposure Context</h2>
+        <textarea id="rationaleInput" placeholder="Occupational, Consumer, Environmental..."></textarea>
+    </div>
+
+    <div class="section">
+        <h2>4. Input from Life Cycle</h2>
+        <textarea id="outcomesInput" placeholder="Physical form, Stability, Exposure, Intended Use, etc..."></textarea>
+    </div>
+
+    <input type="button" value="Generate Template" onclick="generateTemplate()">
+    <input type="button" id="downloadBtn" class="download-btn" value="Download Template as Image" onclick="downloadTemplate()">
+
+    <div id="output"></div>
+
+    <script>
+        function generateTemplate() {
+            const hypothesis = document.getElementById("hypothesisInput").value;
+            const criteria = document.getElementById("criteriaInput").value;
+            const rationale = document.getElementById("rationaleInput").value;
+            const outcomes = document.getElementById("outcomesInput").value;
+
+            let output = '<h2>Your Grouping Hypothesis Template</h2>';
+            output += `<strong>Hypothesis Statement:</strong><br>${hypothesis || 'Not provided'}<br><br>`;
+            output += `<strong>Purpose:</strong><br>${criteria || 'Not provided'}<br><br>`;
+            output += `<strong>Exposure Context:</strong><br>${rationale || 'Not provided'}<br><br>`;
+            output += `<strong>Input from Life Cycle:</strong><br>${outcomes || 'Not provided'}`;
+
+            document.getElementById("output").innerHTML = output;
+
+            // Show the download button
+            document.getElementById("downloadBtn").style.display = "inline-block";
+        }
+
+        function downloadTemplate() {
+            html2canvas(document.getElementById("output")).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = 'grouping_hypothesis_template.png';
+                link.click();
+            });
+        }
+    </script>
+
+</body>
+</html>
